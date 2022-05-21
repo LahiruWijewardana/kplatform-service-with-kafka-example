@@ -16,7 +16,7 @@ public class AppService {
   }
 
   public void registerApplication(AppRegisterRequest appRegisterRequest) {
-    App app = App.builder().appId(1).
+    App app = App.builder().
             appName(appRegisterRequest.appName()).
             host_address(appRegisterRequest.host()).
             build();

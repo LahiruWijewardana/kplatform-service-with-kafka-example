@@ -1,4 +1,4 @@
-package com.kolvin.kplatform.apigateway.models;
+package com.kolvin.kplatform.validateservice.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,32 +8,33 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(
-        name = "app"
+        name = "validate_check_history"
 )
-public class App {
+public class ValidateCheckHistory {
 
   @Id
   @Column(
-          name = "app_id",
-          updatable = false
+          name = "id"
   )
   @GeneratedValue(
           strategy = GenerationType.IDENTITY
   )
+  private Integer id;
+
+  @Column(
+          name = "app_id",
+          nullable = false
+  )
   private Integer appId;
+
   @Column(
-          name = "app_name",
+          name = "is_valid",
           nullable = false
   )
-  private String appName;
-  @Column(
-          name = "host_address",
-          nullable = false
-  )
-  private String host_address;
+  private boolean isValid;
 }
