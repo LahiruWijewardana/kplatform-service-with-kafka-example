@@ -4,3 +4,13 @@ server:
 spring:
   application:
     name: api-gateway
+  datasource:
+    username: root
+    url: jdbc:mysql://localhost:3307/kplatform
+    password: krootpassword
+    jpa:
+      properties:
+        hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
+      hibernate.ddl-auto: update
+      generate-ddl: 'true'
+      show-sql: 'true'
