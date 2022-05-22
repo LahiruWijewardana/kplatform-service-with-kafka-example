@@ -4,11 +4,13 @@ import com.kolvin.kplatform.apigateway.models.App;
 import com.kolvin.kplatform.apigateway.repositories.AppRepository;
 import com.kolvin.kplatform.apigateway.requestformats.AppRegisterRequest;
 import com.kolvin.kplatform.apigateway.responses.ValidateResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
+@Slf4j
 public class AppService {
   private final AppRepository appRepository;
   private final RestTemplate restTemplate;
@@ -33,8 +35,10 @@ public class AppService {
             app.getAppId()
     );
 
+    log.info("App validation received " + validateResponse.isValid());
+
     if (!validateResponse.isValid()) {
-      throw new Error("App is not valid");
+      throw new IllegalStateException("App is not valid");
     }
   }
 }
