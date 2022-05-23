@@ -8,9 +8,15 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class AppConfig {
 
-  @Bean
+  @Bean("validationService")
   @LoadBalanced
-  public RestTemplate restTemplate() {
+  public RestTemplate validationRestTemplate() {
+    return new RestTemplate();
+  }
+
+  @Bean("notificationService")
+  @LoadBalanced
+  public RestTemplate notificationRestTemplate() {
     return new RestTemplate();
   }
 }

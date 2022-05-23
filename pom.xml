@@ -12,6 +12,7 @@
     <module>api-gateway</module>
     <module>validate-service</module>
     <module>eureka-server</module>
+    <module>notification-service</module>
   </modules>
 
   <name>kplatform-services-example</name>
