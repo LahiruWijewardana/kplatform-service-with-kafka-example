@@ -30,7 +30,7 @@ public class AppService {
     appRepository.saveAndFlush(app);
 
     ValidateResponse validateResponse = restTemplate.getForObject(
-            "http://localhost:8081/api/v1/validate/{applicationId}",
+            "http://VALIDATE-SERVICE/api/v1/validate/{applicationId}",
             ValidateResponse.class,
             app.getAppId()
     );
