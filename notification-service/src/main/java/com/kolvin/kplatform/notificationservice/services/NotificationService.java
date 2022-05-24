@@ -1,6 +1,6 @@
 package com.kolvin.kplatform.notificationservice.services;
 
-import com.kolvin.kplatform.notificationservice.requestformats.SendNotificationFormat;
+import com.kolvin.kplatform.notificationservice.requestformats.SendNotificationRequest;
 import com.kolvin.kplatform.notificationservice.models.Notification;
 import com.kolvin.kplatform.notificationservice.repositories.NotificationRepository;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class NotificationService {
   private final NotificationRepository notificationRepository;
 
-  public boolean addNotification(SendNotificationFormat sendNotificationFormat) {
+  public boolean addNotification(SendNotificationRequest sendNotificationRequest) {
     try {
       TimeUnit.SECONDS.sleep(5);
     } catch (InterruptedException e) {
@@ -25,8 +25,8 @@ public class NotificationService {
 
     notificationRepository.save(
             Notification.builder().
-                    appId(sendNotificationFormat.appId()).
-                    message(sendNotificationFormat.message()).
+                    appId(sendNotificationRequest.appId()).
+                    message(sendNotificationRequest.message()).
                     sentTimestamp(LocalDateTime.now()).build()
     );
 

@@ -21,3 +21,8 @@ eureka:
       defaultZone: http://localhost:8761/eureka
     fetch-registry: true
     register-with-eureka: true
+
+queue:
+  name: notification
+  exchange: kolvin.kplatform.rabbitmq.exchange
+  routingKey: kolvin.kplatform.rabbitmq

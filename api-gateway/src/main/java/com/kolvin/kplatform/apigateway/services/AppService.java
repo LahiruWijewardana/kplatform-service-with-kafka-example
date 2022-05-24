@@ -17,14 +17,14 @@ import org.springframework.web.client.RestTemplate;
 public class AppService {
   private final AppRepository appRepository;
   private final RestTemplate validationRestTemplate;
-  private final RestTemplate notificationRestTemplate;
+  private final RabbitMQSender rabbitMQSender;
 
   @Autowired
   public AppService(AppRepository appRepository, @Qualifier("validationService") RestTemplate restTemplate,
-                    @Qualifier("notificationService") RestTemplate notificationRestTemplate) {
+                    RabbitMQSender rabbitMQSender) {
     this.appRepository = appRepository;
     this.validationRestTemplate = restTemplate;
-    this.notificationRestTemplate = notificationRestTemplate;
+    this.rabbitMQSender = rabbitMQSender;
   }
 
   public void registerApplication(AppRegisterRequest appRegisterRequest) {
@@ -44,18 +44,10 @@ public class AppService {
     log.info("App validation received " + validateResponse.isValid());
 
     if (!validateResponse.isValid()) {
-      notificationRestTemplate.getForObject(
-              "http://NOTIFICATION-SERVICE/api/v1/notification",
-              NotificationResponse.class,
-              new SendNotificationRequest(app.getAppId(), "App validation failed")
-      );
+      rabbitMQSender.sendToQueue(new SendNotificationRequest(app.getAppId(), "App validation failed"));
       throw new IllegalStateException("App is not valid");
     }
 
-    notificationRestTemplate.postForObject(
-            "http://NOTIFICATION-SERVICE/api/v1/notification",
-            new SendNotificationRequest(app.getAppId(), "App register successful"),
-            NotificationResponse.class
-    );
+    rabbitMQSender.sendToQueue(new SendNotificationRequest(app.getAppId(), "App register successful"));
   }
 }
