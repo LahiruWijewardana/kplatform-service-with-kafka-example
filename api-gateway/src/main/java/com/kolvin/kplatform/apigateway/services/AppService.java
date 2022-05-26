@@ -4,8 +4,8 @@ import com.kolvin.kplatform.apigateway.models.App;
 import com.kolvin.kplatform.apigateway.repositories.AppRepository;
 import com.kolvin.kplatform.apigateway.requestformats.AppRegisterRequest;
 import com.kolvin.kplatform.apigateway.requestformats.SendNotificationRequest;
-import com.kolvin.kplatform.apigateway.responses.NotificationResponse;
-import com.kolvin.kplatform.apigateway.responses.ValidateResponse;
+import com.kolvin.kplatform.clients.validate.ValidateClient;
+import com.kolvin.kplatform.clients.validate.ValidateResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,13 +18,15 @@ public class AppService {
   private final AppRepository appRepository;
   private final RestTemplate validationRestTemplate;
   private final RabbitMQSender rabbitMQSender;
+  private final ValidateClient validateClient;
 
   @Autowired
   public AppService(AppRepository appRepository, @Qualifier("validationService") RestTemplate restTemplate,
-                    RabbitMQSender rabbitMQSender) {
+                    RabbitMQSender rabbitMQSender, ValidateClient validateClient) {
     this.appRepository = appRepository;
     this.validationRestTemplate = restTemplate;
     this.rabbitMQSender = rabbitMQSender;
+    this.validateClient = validateClient;
   }
 
   public void registerApplication(AppRegisterRequest appRegisterRequest) {
@@ -35,11 +37,7 @@ public class AppService {
 
     appRepository.saveAndFlush(app);
 
-    ValidateResponse validateResponse = validationRestTemplate.getForObject(
-            "http://VALIDATE-SERVICE/api/v1/validate/{applicationId}",
-            ValidateResponse.class,
-            app.getAppId()
-    );
+    ValidateResponse validateResponse = validateClient.validateApplication(app.getAppId());
 
     log.info("App validation received " + validateResponse.isValid());
 
