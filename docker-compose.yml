@@ -19,6 +19,12 @@ services:
     volumes:
       - kplatfrom-db:/var/lib/mysql
 
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - 9411:9411
+
   rabbitmq:
     image: rabbitmq:3.10-management-alpine
     container_name: rabbitmq
