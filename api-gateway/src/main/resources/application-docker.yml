@@ -1,0 +1,36 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  datasource:
+    username: root
+    url: jdbc:mysql://mysqldb:3306/kplatform
+    password: krootpassword
+    jpa:
+      properties:
+        hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
+      hibernate.ddl-auto: update
+      generate-ddl: 'true'
+      show-sql: 'true'
+
+  zipkin:
+    base-url: http://zipkin:9411
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+
+queue:
+  name: notification
+  exchange: kolvin.kplatform.rabbitmq.exchange
+  routingKey: kolvin.kplatform.rabbitmq
