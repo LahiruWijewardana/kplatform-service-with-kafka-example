@@ -1,8 +1,9 @@
 version: '3.3'
 
 services:
-  db:
+  mysqldb:
     image: mysql
+    container_name: mysqldb
     restart: always
     environment:
       MYSQL_DATABASE: 'kplatform'
@@ -11,13 +12,78 @@ services:
       MYSQL_ROOT_PASSWORD: 'krootpassword'
     ports:
       # <Port exposed> : < MySQL Port running inside container>
-      - 3307:3306
-    expose:
-      # Opens port 3306 on the container
-      - 3306
-      # Where our data will be persisted
+      - 3306:3306
+    networks:
+      - mysql-db
     volumes:
       - kplatfrom-db:/var/lib/mysql
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - 9411:9411
+    networks:
+      - spring
+
+  eureka-server:
+    image: lahiruone77/eureka-server:latest
+    container_name: eureka-server
+    ports:
+      - 8761:8761
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - spring
+    depends_on:
+      - zipkin
+
+  api-gateway:
+    image: lahiruone77/api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - spring
+      - mysql-db
+    depends_on:
+      - zipkin
+      - eureka-server
+      - mysqldb
+      - rabbitmq
+
+  validate-service:
+    image: lahiruone77/validate-service:latest
+    container_name: validate-service
+    ports:
+      - 8081:8081
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - spring
+      - mysql-db
+    depends_on:
+      - zipkin
+      - eureka-server
+      - mysqldb
+
+  notification-service:
+    image: lahiruone77/notification-service:latest
+    container_name: notification-service
+    ports:
+      - 8082:8082
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - spring
+      - mysql-db
+    depends_on:
+      - zipkin
+      - eureka-server
+      - mysqldb
+      - rabbitmq
 
   rabbitmq:
     image: rabbitmq:3.10-management-alpine
@@ -25,9 +91,17 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+    networks:
+      - spring
     volumes:
       - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+
+networks:
+  mysql-db:
+    driver: bridge
+  spring:
+    driver: bridge
 
 volumes:
   kplatfrom-db:

@@ -1,6 +1,6 @@
 package com.kolvin.kplatform.validateservice.controllers;
 
-import com.kolvin.kplatform.validateservice.responseformats.ValidateResponse;
+import com.kolvin.kplatform.clients.validate.ValidateResponse;
 import com.kolvin.kplatform.validateservice.services.ValidateCheckService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

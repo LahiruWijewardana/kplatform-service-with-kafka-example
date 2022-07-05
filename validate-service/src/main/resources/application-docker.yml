@@ -1,12 +1,12 @@
 server:
-  port: 8080
+  port: 8081
 
 spring:
   application:
-    name: api-gateway
+    name: validate-service
   datasource:
     username: root
-    url: jdbc:mysql://localhost:3307/kplatform
+    url: jdbc:mysql://mysqldb:3306/kplatform
     password: krootpassword
     jpa:
       properties:
@@ -14,18 +14,12 @@ spring:
       hibernate.ddl-auto: update
       generate-ddl: 'true'
       show-sql: 'true'
-
   zipkin:
-    base-url: http://localhost:9411
+    base-url: http://zipkin:9411
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka-server:8761/eureka
     fetch-registry: true
     register-with-eureka: true
-
-queue:
-  name: notification
-  exchange: kolvin.kplatform.rabbitmq.exchange
-  routingKey: kolvin.kplatform.rabbitmq
